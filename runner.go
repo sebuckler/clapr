@@ -1,3 +1,7 @@
+// Copyright 2020 Stephen Buckler. All rights reserved.
+// Use of this source code is governed by a MIT license
+// that can be found in the LICENSE file.
+
 package clapr
 
 import (
@@ -9,7 +13,15 @@ import (
 	"unicode"
 )
 
+/*
+Runner parses and executes command line commands and arguments.
+*/
 type Runner interface {
+	// Run will parse the command line arguments and return an error if
+	// the parsing fails for any reason. If parsing is successful, Run
+	// will then execute the commands it parsed. It accepts a Context
+	// that it passes to each command's Run function. If a command
+	// fails to execute for any reason, Run will return the error.
 	Run(ctx context.Context) error
 }
 
@@ -23,11 +35,15 @@ type runner struct {
 	syntax   ArgSyntax
 }
 
+/*
+ArgSyntax represents the command line argument syntax supported by the
+utility.
+*/
 type ArgSyntax int
 
 const (
-	GNU ArgSyntax = iota
-	POSIX
+	GNU   ArgSyntax = iota // GNU long options syntax
+	POSIX                  // POSIX-2017.1 syntax
 )
 
 type parsedArg struct {
@@ -62,6 +78,11 @@ type parsedArgContext struct {
 
 type argRuleFn func(arg *string, i int, ctx *parsedArgContext) (bool, error)
 
+/*
+NewRunner creates a struct that satisfies the Runner interface. It
+accepts a Command and ArgSyntax to determine how to parse and execute
+the command line arguments.
+*/
 func NewRunner(cmd *Command, syn ArgSyntax) Runner {
 	configureArgs(cmd)
 

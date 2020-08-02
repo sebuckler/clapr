@@ -1,6 +1,6 @@
 # _CLAPR_
 
-CLAPR stands for _command line argument parser & runner_.
+_CLAPR_ stands for _command line argument parser & runner_.
 This package is for parsing command line arguments with support for subcommands.
 
 Argument parsing syntax options supported:
@@ -79,7 +79,7 @@ cmd.Args = []*clapr.Arg{{
 
 Argument binders are `struct`s that satisfy the `ArgBinder` interface with a `Bind` method.
 The `Bind` method updates the default value with the parsed command line value.
-CLAPR has predefined binders for most value types.
+_CLAPR_ has predefined binders for most value types.
 
 Provided `ArgBinder` types:
  * `bool`
@@ -242,4 +242,4 @@ err := fake.Bind("val", "--arg")
 
 ## License
 
-CLAPR is [MIT licensed](LICENSE).
+_CLAPR_ is [MIT licensed](LICENSE).

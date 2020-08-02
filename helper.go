@@ -1,3 +1,7 @@
+// Copyright 2020 Stephen Buckler. All rights reserved.
+// Use of this source code is governed by a MIT license
+// that can be found in the LICENSE file.
+
 package clapr
 
 import (
@@ -6,7 +10,12 @@ import (
 	"strings"
 )
 
+/*
+Helper is for constructing and formatting help usage output text.
+*/
 type Helper interface {
+	// Help returns the formatted help usage output text. It takes an
+	// ArgSyntax parameter to determine how to format the help text.
 	Help(syn ArgSyntax) string
 }
 

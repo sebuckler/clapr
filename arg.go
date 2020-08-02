@@ -1,3 +1,7 @@
+// Copyright 2020 Stephen Buckler. All rights reserved.
+// Use of this source code is governed by a MIT license
+// that can be found in the LICENSE file.
+
 package clapr
 
 import (
@@ -6,17 +10,25 @@ import (
 	"strings"
 )
 
+/*
+An Arg is a single argument definition for a command.
+*/
 type Arg struct {
-	Binder     ArgBinder
-	IsHelp     bool
-	Name       string
-	ShortName  rune
-	Repeatable bool
-	Required   bool
-	Usage      string
+	Binder     ArgBinder // For parser to bind values
+	IsHelp     bool      // ErrHelp parser error when argument parsed
+	Name       string    // Long name of argument and help text display value
+	ShortName  rune      // Single character argument name
+	Repeatable bool      // Allows argument to be parsed multiple times
+	Required   bool      // Parser error if no value supplied for argument
+	Usage      string    // Short description for help text output
 }
 
+/*
+ArgBinder is for assigning argument values during parsing.
+*/
 type ArgBinder interface {
+	// Bind attempts to assign a parsed value to a parsed argument and
+	// returns an error if the assignment fails.
 	Bind(arg string, val string) error
 }
 
@@ -72,6 +84,11 @@ type uint64ListBinder struct {
 	val *[]uint64
 }
 
+/*
+NewBoolArgBinder returns an ArgBinder for bool arguments. The Bind
+method will error if a value is provided as bool arguments are only
+set by existence.
+*/
 func NewBoolArgBinder(p *bool) ArgBinder {
 	return &boolArgBinder{val: p}
 }
@@ -86,6 +103,12 @@ func (b *boolArgBinder) Bind(arg string, val string) error {
 	return nil
 }
 
+/*
+NewFloat64ArgBinder returns an ArgBinder for float64 arguments. The
+Bind method will not attempt to bind a value if none is provided on
+the command line. Bind will error if value provided cannot parse as a
+float64.
+*/
 func NewFloat64ArgBinder(p *float64) ArgBinder {
 	return &float64Binder{val: p}
 }
@@ -103,6 +126,12 @@ func (b *float64Binder) Bind(arg string, val string) error {
 	}
 }
 
+/*
+NewFloat64ListArgBinder returns an ArgBinder for []float64 arguments.
+The Bind method will not attempt to bind a value if none is provided
+on the command line. Bind will error if any of the values provided
+cannot parse as a []float64.
+*/
 func NewFloat64ListArgBinder(p *[]float64) ArgBinder {
 	return &float64ListBinder{val: p}
 }
@@ -127,6 +156,11 @@ func (b *float64ListBinder) Bind(arg string, val string) error {
 	return nil
 }
 
+/*
+NewIntArgBinder returns an ArgBinder for int arguments. The Bind method
+will not attempt to bind a value if none is provided on the command
+line. Bind will error if value provided cannot parse as an int.
+*/
 func NewIntArgBinder(p *int) ArgBinder {
 	return &intBinder{val: p}
 }
@@ -144,6 +178,12 @@ func (b *intBinder) Bind(arg string, val string) error {
 	}
 }
 
+/*
+NewIntListArgBinder returns an ArgBinder for []int arguments. The Bind
+method will not attempt to bind a value if none is provided on the
+command line. Bind will error if value provided cannot parse as an
+[]int.
+*/
 func NewIntListArgBinder(p *[]int) ArgBinder {
 	return &intListBinder{val: p}
 }
@@ -168,6 +208,12 @@ func (b *intListBinder) Bind(arg string, val string) error {
 	return nil
 }
 
+/*
+NewInt64ArgBinder returns an ArgBinder for int64 arguments. The Bind
+method will not attempt to bind a value if none is provided on the
+command line. Bind will error if value provided cannot parse as an
+int64.
+*/
 func NewInt64ArgBinder(p *int64) ArgBinder {
 	return &int64Binder{val: p}
 }
@@ -185,6 +231,12 @@ func (b *int64Binder) Bind(arg string, val string) error {
 	}
 }
 
+/*
+NewInt64ListArgBinder returns an ArgBinder for []int64 arguments. The
+Bind method will not attempt to bind a value if none is provided on the
+command line. Bind will error if value provided cannot parse as an
+[]int64.
+*/
 func NewInt64ListArgBinder(p *[]int64) ArgBinder {
 	return &int64ListBinder{val: p}
 }
@@ -209,6 +261,12 @@ func (b *int64ListBinder) Bind(arg string, val string) error {
 	return nil
 }
 
+/*
+NewStringArgBinder returns an ArgBinder for string arguments. The Bind
+method will not attempt to bind a value if none is provided on the
+command line. Bind will error if value provided cannot parse as a
+string.
+*/
 func NewStringArgBinder(p *string) ArgBinder {
 	return &stringBinder{val: p}
 }
@@ -223,6 +281,12 @@ func (b *stringBinder) Bind(_ string, val string) error {
 	return nil
 }
 
+/*
+NewStringListArgBinder returns an ArgBinder for []string arguments. The
+Bind method will not attempt to bind a value if none is provided on the
+command line. Bind will error if value provided cannot parse as a
+[]string.
+*/
 func NewStringListArgBinder(p *[]string) ArgBinder {
 	return &stringListBinder{val: p}
 }
@@ -243,6 +307,11 @@ func (b *stringListBinder) Bind(_ string, val string) error {
 	return nil
 }
 
+/*
+NewUintArgBinder returns an ArgBinder for uint arguments. The Bind
+method will not attempt to bind a value if none is provided on the
+command line. Bind will error if value provided cannot parse as a uint.
+*/
 func NewUintArgBinder(p *uint) ArgBinder {
 	return &uintBinder{val: p}
 }
@@ -260,6 +329,12 @@ func (b *uintBinder) Bind(arg string, val string) error {
 	}
 }
 
+/*
+NewUintListArgBinder returns an ArgBinder for []uint arguments. The
+Bind method will not attempt to bind a value if none is provided on the
+command line. Bind will error if value provided cannot parse as a
+[]uint.
+*/
 func NewUintListArgBinder(p *[]uint) ArgBinder {
 	return &uintListBinder{val: p}
 }
@@ -284,6 +359,12 @@ func (b *uintListBinder) Bind(arg string, val string) error {
 	return nil
 }
 
+/*
+NewUint64ArgBinder returns an ArgBinder for uint64 arguments. The Bind
+method will not attempt to bind a value if none is provided on the
+command line. Bind will error if value provided cannot parse as a
+uint64.
+*/
 func NewUint64ArgBinder(p *uint64) ArgBinder {
 	return &uint64Binder{val: p}
 }
@@ -301,6 +382,12 @@ func (b *uint64Binder) Bind(arg string, val string) error {
 	}
 }
 
+/*
+NewUint64ListArgBinder returns an ArgBinder for []uint64 arguments. The
+Bind method will not attempt to bind a value if none is provided on the
+command line. Bind will error if value provided cannot parse as a
+[]uint64.
+*/
 func NewUint64ListArgBinder(p *[]uint64) ArgBinder {
 	return &uint64ListBinder{val: p}
 }
